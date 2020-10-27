@@ -76,12 +76,12 @@ def main(win, width):
                 pos = pygame.mouse.get_pos()
                 row, col = get_clicked_pos(pos, ROWS, width)
                 node = grid[row][col]
-                
-                if not start:
+
+                if not start and node != end:
                     start = node
                     start.make_start()
 
-                elif not end:
+                elif not end and node != start:
                     end = node
                     node.make_end()
 
@@ -89,8 +89,26 @@ def main(win, width):
                     node.make_barrier()
 
             elif pygame.mouse.get_pressed()[2]:
-                pass
+                pos = pygame.mouse.get_pos()
+                row, col = get_clicked_pos(pos, ROWS, width)
+                node = grid[row][col]
+                node.reset()
+
+                if node == start:
+                    start = None
+                
+                if node == end:
+                    end = None
+
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE and not started:
+
 
     pygame.quit()
 
-main(win, SIDE)
+# main(win, SIDE)
+def test(num):
+    for i in range(num):
+        print(i)
+
+test(5)

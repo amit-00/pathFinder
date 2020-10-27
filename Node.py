@@ -34,7 +34,7 @@ class Node:
         return self.color == PURPLE
 
     def reset(self):
-        return self.color == WHITE
+        self.color = WHITE
 
     def make_start(self):
         self.color = ORANGE
@@ -58,6 +58,19 @@ class Node:
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
     
     def update_neighbours(self, grid):
+        self.neighbours = []
+        #Check bottom neighbour
+        if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier():
+                 self.neighbours.append(grid[self.row + 1][self.col])
+        #Check top neighbour
+        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier():
+                 self.neighbours.append(grid[self.row - 1][self.col])
+        #Check right neighbour
+        if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier():
+                 self.neighbours.append(grid[self.row][self.col + 1])
+        #Check right neighbour
+        if self.col < self.total_rows + 1 and not grid[self.row][self.col - 1].is_barrier():
+                 self.neighbours.append(grid[self.row][self.col - 1])
         pass
     
     def __lt__(self, other):
