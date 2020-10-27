@@ -69,3 +69,13 @@ class Node:
 
     def make_path(self):
         self.color = PURPLE
+
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
+    
+    def update_neighbours(self, grid):
+        pass
+    
+    def __lt__(self, other):
+        return False
+
