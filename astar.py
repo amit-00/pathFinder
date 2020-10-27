@@ -21,4 +21,7 @@ def gen_grid(rows, width):
     for i in range(rows):
         grid.append([])
         for j in range(rows):
-            node = Node
+            node = Node(i, j, gap, rows)
+            grid[i].append(node)
+    
+    return grid
