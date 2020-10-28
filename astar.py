@@ -53,6 +53,57 @@ def get_clicked_pos(pos, rows, width):
 
     return row, col
 
+def recon_path(came_from, current):
+    while current in came_from:
+        current = came_from[current]
+        current.make_path()
+        
+
+def path_finding(draw, grid, start, end):
+    count = 0
+    open_set = PriorityQueue()
+    open_set.put((0, count, start))
+    came_from = {}
+    g_score = { node: float("inf") for row in grid for node in row }
+    g_score[start] = 0
+    f_score = { node: float("inf") for row in grid for node in row }
+    f_score[start] = h(start.get_position(), end.get_position())
+
+    open_set_hash = {start}
+
+    while not open_set.empty():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        
+        current = open_set.get()[2]
+        open_set_hash.remove(current)
+
+        if current == end:
+            recon_path(came_from, end)
+            end.make_end()
+            return True
+        
+        for neighbour in current.neighbours:
+            temp_g_score = g_score[current] + 1
+
+            if temp_g_score < g_score[neighbour]:
+                came_from[neighbour] = current
+                g_score[neighbour] = temp_g_score
+                f_score[neighbour] = g_score[neighbour] + h(neighbour.get_position(), end.get_position())
+                if neighbour not in open_set_hash:
+                    count += 1
+                    open_set.put((f_score[neighbour], count, neighbour))
+                    open_set_hash.add(neighbour)
+                    neighbour.make_open()
+
+        draw()
+
+        if current != start:
+            current.make_closed()
+    
+    return False
+
 def main(win, width):
     ROWS = 50
     grid = gen_grid(ROWS, width)
@@ -68,9 +119,6 @@ def main(win, width):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
-            if started:
-                continue
 
             if pygame.mouse.get_pressed()[0]:
                 pos = pygame.mouse.get_pos()
@@ -100,15 +148,19 @@ def main(win, width):
                 if node == end:
                     end = None
 
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE and not started:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and start and end:
+                    for row in grid:
+                        for node in row:
+                            node.update_neighbours(grid)
+                    
+                    path_finding(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
+                if event.key == pygame.K_c:
+                    start = None
+                    end = None
+                    grid = gen_grid(ROWS, width)
 
     pygame.quit()
 
-# main(win, SIDE)
-def test(num):
-    for i in range(num):
-        print(i)
-
-test(5)
+main(win, SIDE)
